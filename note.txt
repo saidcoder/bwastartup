@@ -1,0 +1,6 @@
+folder handler (Controller) 
+
+# file 
+- entity.go (Model)
+- input.go (Mapping input ke model)
+- helper.go (Reformat Json APIResponse)
