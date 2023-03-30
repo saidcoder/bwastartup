@@ -6,7 +6,6 @@ import (
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -29,16 +28,12 @@ func main() {
 	userRepository := user.NewRespository(db)
 	campaignRepository := campaign.NewRespository(db)
 
-	campaigns, err := campaignRepository.FindByUserID(1)
-
-	for _, campaign := range campaigns {
-		fmt.Println(campaign.Name)
-	}
-
+	campaignService := campaign.NewService(campaignRepository)
 	userService := user.NewService(userRepository)
 	authService := auth.NewService()
 
 	userHandler := handler.NewUserHandler(userService, authService)
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 	router := gin.Default()
 
@@ -48,6 +43,7 @@ func main() {
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	router.Run()
 }
 
